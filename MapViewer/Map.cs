@@ -6,13 +6,12 @@ namespace MapViewer;
 
 public class Map
 {
-    public Node EndNode;
-
-    public List<Node> Nodes = new ();
-
-    public List<Node> ShortestPath = new();
-
     public Node StartNode;
+    public Node EndNode;
+    public readonly List<Node> Nodes = new ();
+
+\    public readonly List<Node> ShortestPath = new();
+
     public static Map GenerateRandomMap(int nodeCount, int branching, int seed, bool randomWeights)
     {
         var random = new Random(seed);

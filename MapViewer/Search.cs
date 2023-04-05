@@ -33,8 +33,7 @@ public class SearchEngine
 
     private void BuildShortestPath(List<Node> list, Node node)
     {
-        if (node.NearestToStart == null)
-            return;
+        if (node.NearestToStart == null) return;
         list.Add(node.NearestToStart);
         ShortestPathLength += node.Connections.Single(x => x.ConnectedNode == node.NearestToStart).Length;
         ShortestPathCost += node.Connections.Single(x => x.ConnectedNode == node.NearestToStart).Cost;
