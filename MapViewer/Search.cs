@@ -7,16 +7,13 @@ namespace MapViewer;
 public class SearchEngine
 {
     public event EventHandler Updated;
-    private void OnUpdated()
-    {
-        Updated?.Invoke(null, EventArgs.Empty);
-    }
-    public Map Map { get; set; }
-    public Node Start { get; set; }
-    public Node End { get; set; }
-    public int NodeVisits { get; private set; }
-    public double ShortestPathLength { get; set; }
-    public double ShortestPathCost { get; private set; }
+    private void OnUpdated() => Updated?.Invoke(null, EventArgs.Empty);
+    public readonly Map Map;
+    public readonly Node Start;
+    public readonly Node End;
+    public int NodeVisits { get; protected set; }
+    public double ShortestPathCost { get; protected set; }
+    public double ShortestPathLength { get; protected set; }
 
     public SearchEngine(Map map)
     {
@@ -28,8 +25,10 @@ public class SearchEngine
     public List<Node> GetShortestPathDijikstra()
     {
         DijkstraSearch();
-        var shortestPath = new List<Node>();
-        shortestPath.Add(End);
+        var shortestPath = new List<Node>
+        {
+            End
+        };
         BuildShortestPath(shortestPath, End);
         shortestPath.Reverse();
         return shortestPath;
@@ -49,8 +48,10 @@ public class SearchEngine
     {
         NodeVisits = 0;
         Start.MinCostToStart = 0;
-        var prioQueue = new List<Node>();
-        prioQueue.Add(Start);
+        var prioQueue = new List<Node>
+        {
+            Start
+        };
         var startToEndCost = double.MaxValue;
         do
         {
@@ -83,8 +84,10 @@ public class SearchEngine
         foreach (var node in Map.Nodes)
             node.StraightLineDistanceToEnd = node.StraightLineDistanceTo(End);
         AstarSearch();
-        var shortestPath = new List<Node>();
-        shortestPath.Add(End);
+        var shortestPath = new List<Node>
+        {
+            End
+        };
         BuildShortestPath(shortestPath, End);
         shortestPath.Reverse();
         return shortestPath;
@@ -94,8 +97,10 @@ public class SearchEngine
     {
         NodeVisits = 0;
         Start.MinCostToStart = 0;
-        var prioQueue = new List<Node>();
-        prioQueue.Add(Start);
+        var prioQueue = new List<Node>
+        {
+            Start
+        };
         do {
             prioQueue = prioQueue.OrderBy(x => x.MinCostToStart + x.StraightLineDistanceToEnd).ToList();
             var node = prioQueue.First();
