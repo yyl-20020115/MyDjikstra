@@ -75,7 +75,7 @@ public class SearchEngine
     public List<Node> GetShortestPathAStart()
     {
         foreach (var node in Map.Nodes)
-            node.StraightLineDistanceToEnd = node.StraightLineDistanceTo(End);
+            node.StraightLineDistanceToEnd = node.GetDistanceTo(End);
         AStarSearch();
         var shortestPath = new List<Node> { End };
         BuildShortestPath(shortestPath, End);

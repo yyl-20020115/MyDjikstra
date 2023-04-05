@@ -9,8 +9,7 @@ public class Map
     public Node StartNode;
     public Node EndNode;
     public readonly List<Node> Nodes = new ();
-
-\    public readonly List<Node> ShortestPath = new();
+    public readonly List<Node> ShortestPath = new();
 
     public static Map GenerateRandomMap(int nodeCount, int branching, int seed, bool randomWeights)
     {
@@ -20,7 +19,7 @@ public class Map
         for (int i = 0; i < nodeCount; i++)
         {
             var newNode = Node.GetRandom(random, i.ToString());
-            if (!newNode.ToCloseToAny(map.Nodes))
+            if (!newNode.IsNearToAny(map.Nodes))
                 map.Nodes.Add(newNode);
         }
 

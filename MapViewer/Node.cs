@@ -29,8 +29,9 @@ public class Node
             if (node.Id == this.Id)
                 continue;
 
-            var dist = Math.Sqrt(Math.Pow(Point.X - node.Point.X, 2) + Math.Pow(Point.Y - node.Point.Y, 2));
-            connections.Add(new Edge(dist, randomWeight ? rnd.NextDouble() : dist, node));
+            var distance = this.GetDistanceTo(node);
+            // Math.Sqrt(Math.Pow(Point.X - node.Point.X, 2) + Math.Pow(Point.Y - node.Point.Y, 2));
+            connections.Add(new Edge(distance, randomWeight ? rnd.NextDouble() : distance, node));
         }
         connections = connections.OrderBy(x => x.Length).ToList();
         var count = 0;
@@ -52,19 +53,20 @@ public class Node
         }
     }
 
-    public static Node GetRandom(Random rnd, string name) => new(
-            new(rnd.NextDouble(), rnd.NextDouble()),
+    public static Node GetRandom(Random random, string name) => new(
+            new(random.NextDouble(), random.NextDouble()),
             Guid.NewGuid(),
             name);
 
-    public double StraightLineDistanceTo(Node end)
-        => Math.Sqrt(Math.Pow(Point.X - end.Point.X, 2) + Math.Pow(Point.Y - end.Point.Y, 2));
+    public double GetDistanceTo(Node node) => Math.Sqrt(
+            (Point.X - node.Point.X) * (Point.X - node.Point.X) +
+            (Point.Y - node.Point.Y) * (Point.Y - node.Point.Y));
 
-    internal bool ToCloseToAny(List<Node> nodes)
+    public bool IsNearToAny(List<Node> nodes)
     {
         foreach (var node in nodes)
         {
-            var d = Math.Sqrt(Math.Pow(Point.X - node.Point.X, 2) + Math.Pow(Point.Y - node.Point.Y, 2));
+            var d = GetDistanceTo(node);
             if (d < 0.01)
                 return true;
         }

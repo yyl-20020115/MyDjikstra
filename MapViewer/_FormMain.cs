@@ -6,10 +6,10 @@ using System.Windows.Forms;
 
 namespace MapViewer;
 
-public partial class _FormMain : Form
+public partial class FormMain : Form
 {
-    public Map FormMap { get; set; }
-    public _FormMain()
+    public Map FormMap;
+    public FormMain()
     {
         InitializeComponent();
         Resize += Form1_Resize;
@@ -25,7 +25,7 @@ public partial class _FormMain : Form
     {
         if (FormMap == null)
             return;
-        var g = e.Graphics;
+        using var g = e.Graphics;
         g.ScaleTransform(0.9f, 0.9f);
         g.TranslateTransform(20, 20);
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -91,7 +91,8 @@ public partial class _FormMain : Form
         var search = new SearchEngine(FormMap);
         search.Updated += Search_Updated;
         var sw = Stopwatch.StartNew();
-        FormMap.ShortestPath = search.GetShortestPathDijkstra();
+        FormMap.ShortestPath.Clear();
+        FormMap.ShortestPath.AddRange(search.GetShortestPathDijkstra());
         sw.Stop();
         panel1.Invalidate();
         PrintStats(search, sw);
@@ -101,14 +102,15 @@ public partial class _FormMain : Form
     {
         richTextBox1.Text = "";
         this.FormMap = Map.GenerateRandomMap(
-            (int)numericUpDownNodeCount.Value, 
-            (int)numericUpDownBranching.Value, 
+            (int)numericUpDownNodeCount.Value,
+            (int)numericUpDownBranching.Value,
             (int)numericUpDownSeed.Value,
             cbRandomWeights.Checked);
         var search = new SearchEngine(FormMap);
         search.Updated += Search_Updated;
         var sw = Stopwatch.StartNew();
-        FormMap.ShortestPath = search.GetShortestPathAStart();
+        FormMap.ShortestPath.Clear();
+        FormMap.ShortestPath.AddRange(search.GetShortestPathAStart());
         sw.Stop();
         PrintStats(search, sw);
         panel1.Invalidate();
@@ -116,11 +118,7 @@ public partial class _FormMain : Form
     }
     private void PrintStats(SearchEngine search, Stopwatch sw)
     {
-        richTextBox1.Text = $"Total: {FormMap.Nodes.Count}\r\n" +
-            $"Visited {search.NodeVisits}\r\n" +
-            $"Time: {sw.Elapsed.TotalMilliseconds}ms\r\n" +
-            $"Path length: {search.ShortestPathLength.ToString("0.00")}\r\n" +
-            $"Path Cost: {search.ShortestPathCost.ToString("0.00")}";
+        richTextBox1.Text = $"Total: {FormMap.Nodes.Count}\r\nVisited {search.NodeVisits}\r\nTime: {sw.Elapsed.TotalMilliseconds}ms\r\nPath length: {search.ShortestPathLength.ToString("0.00")}\r\nPath Cost: {search.ShortestPathCost.ToString("0.00")}";
     }
 
     private void Search_Updated(object sender, EventArgs e)
