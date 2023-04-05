@@ -97,8 +97,6 @@ public class SearchEngine
             priorityQueue.Remove(node);
             NodeVisits++;
             
-            var bag = new ConcurrentBag<Node>();
-
             foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
             {
                 var childNode = cnn.ConnectedNode;
