@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace MapViewer
+namespace MapViewer;
+
+public class DoubledBufferedPanel : Panel
 {
-    public class DoubledBufferedPanel : Panel
+    public DoubledBufferedPanel()
     {
-        public DoubledBufferedPanel()
-        {
-            base.DoubleBuffered = true;
-        }
+        base.DoubleBuffered = true;
     }
 }
