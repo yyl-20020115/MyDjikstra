@@ -4,8 +4,5 @@ namespace MapViewer;
 
 public class DoubledBufferedPanel : Panel
 {
-    public DoubledBufferedPanel()
-    {
-        base.DoubleBuffered = true;
-    }
+    public DoubledBufferedPanel() => base.DoubleBuffered = true;
 }

@@ -14,6 +14,6 @@ public static class Program
         Application.EnableVisualStyles();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new FormMain());
+        Application.Run(new _FormMain());
     }
 }

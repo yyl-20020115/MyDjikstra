@@ -6,16 +6,16 @@ using System.Windows.Forms;
 
 namespace MapViewer;
 
-public partial class FormMain : Form
+public partial class _FormMain : Form
 {
     public Map FormMap { get; set; }
-    public FormMain()
+    public _FormMain()
     {
         InitializeComponent();
         Resize += Form1_Resize;
         panel1.Paint += Panel1_Paint;
     }
-    
+
     private void Form1_Resize(object sender, EventArgs e)
     {
         panel1.Invalidate();
@@ -57,7 +57,7 @@ public partial class FormMain : Form
                 g.DrawLine(Pens.DarkBlue, (float)x1, (float)y1, (float)x2, (float)y2);
             }
         }
-       
+
         var pen = new Pen(Brushes.YellowGreen, 2);
         for (int i = 0; i < FormMap.ShortestPath.Count - 1; i++)
         {
@@ -79,11 +79,28 @@ public partial class FormMain : Form
         //    g.DrawString(node.Name, font, Brushes.Orange, (float)x - 5, (float)y - 5);
         //}
     }
-    
-    private void DijikstraSearchNewMap()
+
+    private void DijkstraSearchNewMap()
     {
         richTextBox1.Text = "";
-        FormMap = Map.Randomize(
+        FormMap = Map.GenerateRandomMap(
+            (int)numericUpDownNodeCount.Value,
+            (int)numericUpDownBranching.Value,
+            (int)numericUpDownSeed.Value,
+            cbRandomWeights.Checked);
+        var search = new SearchEngine(FormMap);
+        search.Updated += Search_Updated;
+        var sw = Stopwatch.StartNew();
+        FormMap.ShortestPath = search.GetShortestPathDijkstra();
+        sw.Stop();
+        panel1.Invalidate();
+        PrintStats(search, sw);
+    }
+
+    private void AStarSearchNewMap()
+    {
+        richTextBox1.Text = "";
+        this.FormMap = Map.GenerateRandomMap(
             (int)numericUpDownNodeCount.Value, 
             (int)numericUpDownBranching.Value, 
             (int)numericUpDownSeed.Value,
@@ -91,25 +108,11 @@ public partial class FormMain : Form
         var search = new SearchEngine(FormMap);
         search.Updated += Search_Updated;
         var sw = Stopwatch.StartNew();
-        FormMap.ShortestPath = search.GetShortestPathDijikstra();
+        FormMap.ShortestPath = search.GetShortestPathAStart();
         sw.Stop();
-        panel1.Invalidate();
         PrintStats(search, sw);
-    }
+        panel1.Invalidate();
 
-    private void AstarSearchNewMap()
-    {
-        richTextBox1.Text = "";
-        FormMap = Map.Randomize((int)numericUpDownNodeCount.Value, (int)numericUpDownBranching.Value, (int)numericUpDownSeed.Value,
-            cbRandomWeights.Checked);
-        var search = new SearchEngine(FormMap);
-        search.Updated += Search_Updated;
-        var sw = Stopwatch.StartNew();
-        FormMap.ShortestPath = search.GetShortestPathAstart();
-        sw.Stop();
-        PrintStats(search, sw);
-        panel1.Invalidate();
-        
     }
     private void PrintStats(SearchEngine search, Stopwatch sw)
     {
@@ -118,22 +121,22 @@ public partial class FormMain : Form
             $"Time: {sw.Elapsed.TotalMilliseconds}ms\r\n" +
             $"Path length: {search.ShortestPathLength.ToString("0.00")}\r\n" +
             $"Path Cost: {search.ShortestPathCost.ToString("0.00")}";
-    }        
+    }
 
     private void Search_Updated(object sender, EventArgs e)
     {
         panel1.Invalidate();
-        Application.DoEvents();            
-        Thread.Sleep(300);
+        Application.DoEvents();
+        Thread.Sleep(50);
     }
 
-    private void buttonDjikstra_Click(object sender, EventArgs e)
+    private void ButtonDijkstra_Click(object sender, EventArgs e)
     {
-        DijikstraSearchNewMap();
+        DijkstraSearchNewMap();
     }
 
-    private void buttonAstar_Click(object sender, EventArgs e)
+    private void ButtonAStar_Click(object sender, EventArgs e)
     {
-        AstarSearchNewMap();
+        AStarSearchNewMap();
     }
 }

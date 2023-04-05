@@ -6,7 +6,6 @@ namespace MapViewer;
 
 public class Map
 {
-
     public Node EndNode;
 
     public List<Node> Nodes = new ();
@@ -14,24 +13,24 @@ public class Map
     public List<Node> ShortestPath = new();
 
     public Node StartNode;
-    public static Map Randomize(int nodeCount, int branching, int seed, bool randomWeights)
+    public static Map GenerateRandomMap(int nodeCount, int branching, int seed, bool randomWeights)
     {
-        var rnd = new Random(seed);
+        var random = new Random(seed);
         var map = new Map();
 
         for (int i = 0; i < nodeCount; i++)
         {
-            var newNode = Node.GetRandom(rnd, i.ToString());
+            var newNode = Node.GetRandom(random, i.ToString());
             if (!newNode.ToCloseToAny(map.Nodes))
                 map.Nodes.Add(newNode);
         }
 
         foreach (var node in map.Nodes)
-            node.ConnectClosestNodes(map.Nodes, branching, rnd, randomWeights);
+            node.ConnectClosestNodes(map.Nodes, branching, random, randomWeights);
         //map.StartNode = map.Nodes.OrderBy(n => n.Point.X + n.Point.Y).First();
         //map.EndNode = map.Nodes.OrderBy(n => n.Point.X + n.Point.Y).Last();
-        map.EndNode = map.Nodes[rnd.Next(map.Nodes.Count - 1)];
-        map.StartNode = map.Nodes[rnd.Next(map.Nodes.Count - 1)];
+        map.EndNode = map.Nodes[random.Next(map.Nodes.Count - 1)];
+        map.StartNode = map.Nodes[random.Next(map.Nodes.Count - 1)];
 
         foreach (var node in map.Nodes)
         {

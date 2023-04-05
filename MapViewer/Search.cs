@@ -17,18 +17,15 @@ public class SearchEngine
 
     public SearchEngine(Map map)
     {
-        Map = map;
-        End = map.EndNode;
         Start = map.StartNode;
+        End = map.EndNode;
+        Map = map;
     }
 
-    public List<Node> GetShortestPathDijikstra()
+    public List<Node> GetShortestPathDijkstra()
     {
         DijkstraSearch();
-        var shortestPath = new List<Node>
-        {
-            End
-        };
+        var shortestPath = new List<Node> { End };
         BuildShortestPath(shortestPath, End);
         shortestPath.Reverse();
         return shortestPath;
@@ -48,17 +45,14 @@ public class SearchEngine
     {
         NodeVisits = 0;
         Start.MinCostToStart = 0;
-        var prioQueue = new List<Node>
-        {
-            Start
-        };
+        var priorityQueue = new List<Node>{Start };
         var startToEndCost = double.MaxValue;
         do
         {
             NodeVisits++;
-            prioQueue = prioQueue.OrderBy(x => x.MinCostToStart.Value).ToList();
-            var node = prioQueue.First();
-            prioQueue.Remove(node);
+            priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart.Value).ToList();
+            var node = priorityQueue.First();
+            priorityQueue.Remove(node);
             foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
             {
                 var childNode = cnn.ConnectedNode;
@@ -69,42 +63,36 @@ public class SearchEngine
                 {
                     childNode.MinCostToStart = node.MinCostToStart + cnn.Cost;
                     childNode.NearestToStart = node;
-                    if (!prioQueue.Contains(childNode))
-                        prioQueue.Add(childNode);
+                    if (!priorityQueue.Contains(childNode))
+                        priorityQueue.Add(childNode);
                 }
             }
             node.Visited = true;
             if (node == End)
                 startToEndCost = node.MinCostToStart.Value;
-        } while (prioQueue.Any());
+        } while (priorityQueue.Any());
     }
 
-    public List<Node> GetShortestPathAstart()
+    public List<Node> GetShortestPathAStart()
     {
         foreach (var node in Map.Nodes)
             node.StraightLineDistanceToEnd = node.StraightLineDistanceTo(End);
-        AstarSearch();
-        var shortestPath = new List<Node>
-        {
-            End
-        };
+        AStarSearch();
+        var shortestPath = new List<Node> { End };
         BuildShortestPath(shortestPath, End);
         shortestPath.Reverse();
         return shortestPath;
     }
 
-    private void AstarSearch()
+    private void AStarSearch()
     {
         NodeVisits = 0;
         Start.MinCostToStart = 0;
-        var prioQueue = new List<Node>
-        {
-            Start
-        };
+        var priorityQueue = new List<Node> { Start };
         do {
-            prioQueue = prioQueue.OrderBy(x => x.MinCostToStart + x.StraightLineDistanceToEnd).ToList();
-            var node = prioQueue.First();
-            prioQueue.Remove(node);
+            priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart + x.StraightLineDistanceToEnd).ToList();
+            var node = priorityQueue.First();
+            priorityQueue.Remove(node);
             NodeVisits++;
             foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
             {
@@ -116,13 +104,13 @@ public class SearchEngine
                 {
                     childNode.MinCostToStart = node.MinCostToStart + cnn.Cost;
                     childNode.NearestToStart = node;
-                    if (!prioQueue.Contains(childNode))
-                        prioQueue.Add(childNode);
+                    if (!priorityQueue.Contains(childNode))
+                        priorityQueue.Add(childNode);
                 }
             }
             node.Visited = true;
             if (node == End)
                 return;
-        } while (prioQueue.Any());
+        } while (priorityQueue.Any());
     }
 }
