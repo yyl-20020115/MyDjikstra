@@ -55,8 +55,10 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Map.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,16 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{44bd0fa9-c311-48fa-8e8c-b1a73f69b1af}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyDjikstra\MyDjikstra.csproj">
-      <Project>{106743f8-8976-4ec4-8e77-5ccc957a2e3f}</Project>
-      <Name>MyDjikstra</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
