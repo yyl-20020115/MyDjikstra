@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace MapViewer;
 
@@ -54,21 +56,23 @@ public class SearchEngine
     {
         NodeVisits = 0;
         Start.MinCostToStart = 0;
-        var priorityQueue = new List<Node>{Start };
+        var priorityQueue = new List<Node> { Start };
         var startToEndCost = double.MaxValue;
-        do
+        
+        while(priorityQueue.Count > 0)
         {
             NodeVisits++;
             priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart.GetValueOrDefault()).ToList();
-            var node = priorityQueue.First();
-            priorityQueue.Remove(node);
+            var node = priorityQueue[0];
+            priorityQueue.RemoveAt(0);
+            node.Visited = true;
             foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
             {
                 var childNode = cnn.ConnectedNode;
                 if (!childNode.Visited)
                 {
                     if (childNode.MinCostToStart == null ||
-                        node.MinCostToStart + cnn.Cost < childNode.MinCostToStart 
+                        node.MinCostToStart + cnn.Cost < childNode.MinCostToStart
                         && node.MinCostToStart + cnn.Cost < startToEndCost)
                     {
                         childNode.MinCostToStart = node.MinCostToStart + cnn.Cost;
@@ -78,10 +82,9 @@ public class SearchEngine
                     }
                 }
             }
-            node.Visited = true;
             if (node == End)
                 startToEndCost = node.MinCostToStart.Value;
-        } while (priorityQueue.Any());
+        }
     }
 
 
@@ -90,12 +93,13 @@ public class SearchEngine
         NodeVisits = 0;
         Start.MinCostToStart = 0;
         var priorityQueue = new List<Node> { Start };
-        do {
+        while (priorityQueue.Count > 0)
+        {
             priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart + x.StraightLineDistanceToEnd).ToList();
-            var node = priorityQueue.First();
-            priorityQueue.Remove(node);
+            var node = priorityQueue[0];
+            priorityQueue.RemoveAt(0);
             NodeVisits++;
-            
+            node.Visited = true;
             foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
             {
                 var childNode = cnn.ConnectedNode;
@@ -111,9 +115,8 @@ public class SearchEngine
                     }
                 }
             }
-            node.Visited = true;
             if (node == End)
                 return;
-        } while (priorityQueue.Any());
+        }
     }
 }
