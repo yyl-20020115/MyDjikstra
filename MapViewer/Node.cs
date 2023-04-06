@@ -6,24 +6,24 @@ namespace MapViewer;
 
 public class Node
 {
-    public readonly List<Edge> Connections = new();
     public readonly string Name;
     public readonly Guid Id;
     public readonly Point Point;
 
-    public double? MinCostToStart;
-    public Node NearestToStart;
-    public double StraightLineDistanceToEnd;
-    public bool Visited;
+    public readonly List<Edge> Edges = new();
+    public double? MinCostToStart = null;
+    public Node? NearestToStart = null;
+    public double DirectDistanceToEnd = 0;
+    public bool Visited = false;
     public Node(Point p, Guid Id, string name)
     {
         this.Name = name;
         this.Id = Id;
         this.Point = p;
     }
-    public void ConnectClosestNodes(List<Node> nodes, int branching, Random rnd, bool randomWeight)
+    public void ConnectNearestNodes(List<Node> nodes, int branching, Random rnd, bool randomWeight)
     {
-        var connections = new List<Edge>();
+        var edges = new List<Edge>();
         foreach (var node in nodes)
         {
             if (node.Id == this.Id)
@@ -31,22 +31,22 @@ public class Node
 
             var distance = this.GetDistanceTo(node);
             // Math.Sqrt(Math.Pow(Point.X - node.Point.X, 2) + Math.Pow(Point.Y - node.Point.Y, 2));
-            connections.Add(new Edge(distance, randomWeight ? rnd.NextDouble() : distance, node));
+            edges.Add(new Edge(distance, randomWeight ? rnd.NextDouble() : distance, node));
         }
-        connections = connections.OrderBy(x => x.Length).ToList();
+        edges = edges.OrderBy(x => x.Length).ToList();
         var count = 0;
-        foreach (var cnn in connections)
+        foreach (var edge in edges)
         {
             //Connect three closes nodes that are not connected.
-            if (!Connections.Any(c => c.ConnectedNode == cnn.ConnectedNode))
-                Connections.Add(cnn);
+            if (!Edges.Any(c => c.Target == edge.Target))
+                Edges.Add(edge);
             count++;
 
             //Make it a two way connection if not already connected
-            if (!cnn.ConnectedNode.Connections.Any(cc => cc.ConnectedNode == this))
+            if (!edge.Target.Edges.Any(cc => cc.Target == this))
             {
                 //var backConnection = ;
-                cnn.ConnectedNode.Connections.Add(new(cnn.Length, cnn.Cost, this));
+                edge.Target.Edges.Add(new(edge.Length, edge.Cost, this));
             }
             if (count == branching)
                 return;
@@ -62,14 +62,11 @@ public class Node
             (Point.X - node.Point.X) * (Point.X - node.Point.X) +
             (Point.Y - node.Point.Y) * (Point.Y - node.Point.Y));
 
-    public bool IsNearToAny(List<Node> nodes)
+    public bool IsNearToAny(List<Node> nodes,double threshold = 0.01)
     {
         foreach (var node in nodes)
-        {
-            var d = GetDistanceTo(node);
-            if (d < 0.01)
+            if (GetDistanceTo(node) < threshold)
                 return true;
-        }
         return false;
     }
     public override string ToString() => Name;

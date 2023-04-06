@@ -4,13 +4,13 @@ public class Edge
 {
     public readonly double Length;
     public readonly double Cost;
-    public readonly Node ConnectedNode;
-    public Edge(double Length, double Cost, Node ConnectedNode)
+    public readonly Node Target;
+    public Edge(double Length, double Cost, Node Target)
     {
         this.Length = Length;
         this.Cost = Cost;
-        this.ConnectedNode = ConnectedNode;
+        this.Target = Target;
     }
     public override string ToString() 
-        => "-> " + ConnectedNode.ToString();
+        => "-> " + Target.ToString();
 }

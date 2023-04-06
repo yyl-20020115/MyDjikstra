@@ -33,7 +33,7 @@ public class SearchEngine
     public List<Node> GetShortestPathAStart()
     {
         foreach (var node in Map.Nodes)
-            node.StraightLineDistanceToEnd = node.GetDistanceTo(End);
+            node.DirectDistanceToEnd = node.GetDistanceTo(End);
         this.AStarSearch();
         var shortestPath = new List<Node> { End };
         this.BuildShortestPath(shortestPath, End);
@@ -45,8 +45,8 @@ public class SearchEngine
     {
         if (node.NearestToStart == null) return;
         list.Add(node.NearestToStart);
-        this.ShortestPathLength += node.Connections.Single(x => x.ConnectedNode == node.NearestToStart).Length;
-        this.ShortestPathCost += node.Connections.Single(x => x.ConnectedNode == node.NearestToStart).Cost;
+        this.ShortestPathLength += node.Edges.Single(x => x.Target == node.NearestToStart).Length;
+        this.ShortestPathCost += node.Edges.Single(x => x.Target == node.NearestToStart).Cost;
         this.BuildShortestPath(list, node.NearestToStart);
     }
 
@@ -64,9 +64,9 @@ public class SearchEngine
             var node = priorityQueue[0];
             priorityQueue.RemoveAt(0);
             node.Visited = true;
-            foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
+            foreach (var cnn in node.Edges.OrderBy(x => x.Cost))
             {
-                var childNode = cnn.ConnectedNode;
+                var childNode = cnn.Target;
                 if (!childNode.Visited)
                 {
                     if (childNode.MinCostToStart == null ||
@@ -92,14 +92,14 @@ public class SearchEngine
         var priorityQueue = new List<Node> { Start };
         while (priorityQueue.Count > 0)
         {
-            priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart + x.StraightLineDistanceToEnd).ToList();
+            priorityQueue = priorityQueue.OrderBy(x => x.MinCostToStart + x.DirectDistanceToEnd).ToList();
             var node = priorityQueue[0];
             priorityQueue.RemoveAt(0);
             NodeVisits++;
             node.Visited = true;
-            foreach (var cnn in node.Connections.OrderBy(x => x.Cost))
+            foreach (var cnn in node.Edges.OrderBy(x => x.Cost))
             {
-                var childNode = cnn.ConnectedNode;
+                var childNode = cnn.Target;
                 if (!childNode.Visited)
                 {
                     if (childNode.MinCostToStart == null ||

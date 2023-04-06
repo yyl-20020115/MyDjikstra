@@ -50,10 +50,10 @@ public partial class FormMain : Form
                 brs = Brushes.Green;
             g.FillEllipse(brs, (float)x, (float)y, nodeWidth, nodeWidth);
 
-            foreach (var cnn in node.Connections)
+            foreach (var cnn in node.Edges)
             {
-                var x2 = (cnn.ConnectedNode.Point.X * sideX);
-                var y2 = (cnn.ConnectedNode.Point.Y * sideY);
+                var x2 = (cnn.Target.Point.X * sideX);
+                var y2 = (cnn.Target.Point.Y * sideY);
                 g.DrawLine(Pens.DarkBlue, (float)x1, (float)y1, (float)x2, (float)y2);
             }
         }
