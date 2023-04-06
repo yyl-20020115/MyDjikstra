@@ -6,31 +6,26 @@ namespace MapViewer;
 
 public class Map
 {
-    public Node StartNode;
-    public Node EndNode;
-    public readonly List<Node> Nodes = new ();
-    public readonly List<Node> ShortestPath = new();
-
     public static Map GenerateRandomMap(int nodeCount, int branching, int seed, bool randomWeights)
     {
         var random = new Random(seed);
-        var map = new Map();
+        List<Node> Nodes = new();
 
         for (int i = 0; i < nodeCount; i++)
         {
             var newNode = Node.GetRandom(random, i.ToString());
-            if (!newNode.IsNearToAny(map.Nodes))
-                map.Nodes.Add(newNode);
+            if (!newNode.IsNearToAny(Nodes))
+                Nodes.Add(newNode);
         }
 
-        foreach (var node in map.Nodes)
-            node.ConnectClosestNodes(map.Nodes, branching, random, randomWeights);
+        foreach (var node in Nodes)
+            node.ConnectClosestNodes(Nodes, branching, random, randomWeights);
         //map.StartNode = map.Nodes.OrderBy(n => n.Point.X + n.Point.Y).First();
         //map.EndNode = map.Nodes.OrderBy(n => n.Point.X + n.Point.Y).Last();
-        map.EndNode = map.Nodes[random.Next(map.Nodes.Count - 1)];
-        map.StartNode = map.Nodes[random.Next(map.Nodes.Count - 1)];
+        var EndNode = Nodes[random.Next(Nodes.Count - 1)];
+        var StartNode = Nodes[random.Next(Nodes.Count - 1)];
 
-        foreach (var node in map.Nodes)
+        foreach (var node in Nodes)
         {
             Debug.WriteLine($"{node}");
             foreach (var cnn in node.Connections)
@@ -38,6 +33,19 @@ public class Map
                 Debug.WriteLine($"{cnn}");
             }
         }
-        return map;
+        return new Map(StartNode, EndNode, Nodes, new());
+    }
+
+    public readonly Node StartNode;
+    public readonly Node EndNode;
+    public readonly List<Node> Nodes;
+    public readonly List<Node> ShortestPath;
+
+    public Map(Node StartNode, Node EndNode, List<Node> Nodes, List<Node> ShortestPath)
+    {
+        this.StartNode = StartNode;
+        this.EndNode = EndNode;
+        this.Nodes = Nodes;
+        this.ShortestPath = ShortestPath;
     }
 }
