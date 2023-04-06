@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace MapViewer;
 
@@ -86,7 +84,6 @@ public class SearchEngine
                 startToEndCost = node.MinCostToStart.Value;
         }
     }
-
 
     protected void AStarSearch()
     {
